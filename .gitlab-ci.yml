@@ -61,7 +61,7 @@ run-tests:
     <<: *install-deps
     image: python:3.12
     script:
-        - poetry run pytest --cov=prometheusrpcexporter --cov-report=term --cov-report=html --disable-warnings --cov-fail-under=70
+        - poetry run pytest --cov=exporter --cov-report=term --cov-report=html --disable-warnings --cov-fail-under=70
     artifacts:
         paths:
             - htmlcov/
@@ -75,7 +75,7 @@ check-docstring:
     <<: *install-deps
     image: python:3.12
     script:
-        - poetry run pydocstyle prometheusrpcexporter/
+        - poetry run pydocstyle exporter/
     allow_failure: true
 
 # Mypy type checking (non-blocking)
@@ -84,5 +84,5 @@ type-check:
     <<: *install-deps
     image: python:3.12
     script:
-        - poetry run mypy --ignore-missing-imports prometheusrpcexporter/
+        - poetry run mypy --ignore-missing-imports exporter/
     allow_failure: true

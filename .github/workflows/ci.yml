@@ -1,0 +1,165 @@
+name: CI Pipeline
+
+on:
+    push:
+        branches:
+            - "main"
+    pull_request:
+        branches:
+            - "main"
+
+jobs:
+    install-dependencies:
+        name: Install Dependencies
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v3
+
+            - name: Setup Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: 3.12
+
+            - name: Cache dependencies
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      .venv
+                      .cache/pip
+                      .cache/pypoetry
+                  key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+
+            - name: Install Poetry
+              run: |
+                  python --version
+                  pip install poetry
+                  poetry --version
+                  poetry install -vv
+                  poetry run pre-commit install
+
+            - name: Confirm Installation
+              run: echo "Dependencies installed successfully!"
+
+    lint:
+        name: Linting
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v3
+
+            - name: Setup Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: 3.12
+
+            - name: Install Dependencies
+              run: |
+                  pip install poetry
+                  poetry install -vv
+
+            - name: Run Linting
+              run: |
+                  poetry run pre-commit run black --all-files
+                  poetry run pre-commit run isort --all-files
+                  poetry run pre-commit run flake8 --all-files
+                  poetry run pre-commit run codespell --all-files
+
+    format:
+        name: Formatting
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v3
+
+            - name: Setup Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: 3.12
+
+            - name: Install Dependencies
+              run: |
+                  pip install poetry
+                  poetry install -vv
+
+            - name: Run Formatting
+              run: |
+                  poetry run pre-commit run black --all-files
+                  poetry run pre-commit run isort --all-files
+
+    run-tests:
+        name: Run Tests
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v3
+
+            - name: Setup Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: 3.12
+
+            - name: Install Dependencies
+              run: |
+                  pip install poetry
+                  poetry install -vv
+
+            - name: Run Tests
+              run: |
+                  poetry run pytest --cov=exporter --cov-report=term --cov-report=html --disable-warnings --cov-fail-under=70
+
+            - name: Upload Coverage Report
+              uses: actions/upload-artifact@v3
+              with:
+                  name: coverage-report
+                  path: htmlcov/
+
+    check-docstring:
+        name: Check Docstring
+        runs-on: ubuntu-latest
+        continue-on-error: true
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v3
+
+            - name: Setup Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: 3.12
+
+            - name: Install Dependencies
+              run: |
+                  pip install poetry
+                  poetry install -vv
+
+            - name: Run Docstring Checks
+              run: |
+                  poetry run pydocstyle exporter/
+
+    type-check:
+        name: Type Checking
+        runs-on: ubuntu-latest
+        continue-on-error: true
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v3
+
+            - name: Setup Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: 3.12
+
+            - name: Install Dependencies
+              run: |
+                  pip install poetry
+                  poetry install -vv
+
+            - name: Run Type Checks
+              run: |
+                  poetry run mypy --ignore-missing-imports exporter/
