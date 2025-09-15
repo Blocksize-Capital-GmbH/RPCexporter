@@ -18,6 +18,8 @@ class TestRPCExporter(unittest.TestCase):
             "VOTE_PUBKEY": "6jJK69aeuLbVnM6nUKnmMMwyQG2rNjKNFrfM459kfAdL",
             "VALIDATOR_PUBKEY": "4EKxPYXmBha7ADnZphFFC13RaKNYLZCiQPKuSV8YWRZc",
             "STAKE_ACCOUNT_PUBKEY": "J1XibEzMT4pAhu6yBFs2EdsK8nSrVcCao3Ut4eYytzmw",
+            "VERSION": "0.1.0",
+            "LABEL": "test",
         },
     )
     @patch("exporter.jsonRPCRequest.JsonRPCRequest.send")

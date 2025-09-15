@@ -8,6 +8,8 @@ CONFIG_KEYS: dict[str, dict[str, str]] = {
         "poll_interval": "POLL_INTERVAL",
         "vote_pubkey": "VOTE_PUBKEY",
         "validator_pubkey": "VALIDATOR_PUBKEY",
+        "version": "VERSION",
+        "label": "LABEL",
     },
     "supra": {
         "rpc_url": "SUPRA_RPC_URL",
