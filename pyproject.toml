@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "exporter"
-version = "0.7.0"
+version = "0.8.0"
 description = "A Prometheus exporter for RPC responses."
 authors = ["Axel Lode <al@blocksize-capital.com>"]
 
