@@ -7,7 +7,7 @@ to RPCExporter using the config_keys parameter.
 Example:
     # Old way (deprecated):
     exporter = RPCExporter(network="solana", config_source="fromEnv")
-    
+
     # New way (preferred):
     from myexporter.config import ALL_CONFIG_KEYS, REQUIRED_CONFIG_KEYS
     exporter = RPCExporter(
@@ -23,7 +23,7 @@ warnings.warn(
     "rpcExporterDefaults.CONFIG_KEYS is deprecated. "
     "Define configuration keys in your exporter implementation instead.",
     DeprecationWarning,
-    stacklevel=2,
+    stacklevel=2
 )
 
 # Legacy CONFIG_KEYS kept for backward compatibility

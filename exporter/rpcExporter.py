@@ -28,8 +28,8 @@ class RPCExporter:
         """Initialize the RPC Exporter.
 
         Args:
-            config_source: Configuration source ('fromEnv' or 'fromFile')
-            config_file: Path to configuration file (required if config_source='fromFile')
+            config_source: Configuration source ('fromEnv' or 'fromFile') OR legacy network name
+            config_file: Path to configuration file (required if config_source='fromFile') OR legacy config_source
             network: Network name (deprecated, use config_keys instead)
             config_keys: Dictionary mapping config key names to environment variable names
             required_keys: Dictionary of required configuration keys (subset of config_keys)
@@ -43,9 +43,36 @@ class RPCExporter:
 
         Example (legacy, deprecated):
             exporter = RPCExporter(network="solana", config_source="fromEnv")
+            OR
+            exporter = RPCExporter("solana", "fromEnv")  # positional args
         """
-        # Handle legacy network parameter
+        # Detect legacy API usage: RPCExporter(network, config_source, config_file)
+        # If first param looks like a network name and second looks like a config source
+        if (
+            config_keys is None
+            and network is None
+            and config_source in ["solana", "supra"]  # Known network names
+            and config_file in ["fromEnv", "fromFile", None]
+        ):
+            # Legacy positional arguments detected
+            warnings.warn(
+                "Calling RPCExporter(network, config_source) is deprecated. "
+                "Use RPCExporter(config_source=..., config_keys=..., required_keys=...) instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            network = config_source  # First arg was actually network
+            config_source = config_file or "fromEnv"  # Second arg was actually config_source
+            config_file = None  # Reset config_file
+
+        # Handle legacy network parameter (keyword or after detection)
         if network is not None and config_keys is None:
+            if config_source not in ["fromEnv", "fromFile"]:
+                # Provide a better error message
+                raise ValueError(
+                    f"Invalid config_source '{config_source}'. "
+                    "Must be 'fromEnv' or 'fromFile'."
+                )
             warnings.warn(
                 "Passing 'network' parameter is deprecated. "
                 "Please pass 'config_keys' and 'required_keys' instead.",
@@ -59,7 +86,10 @@ class RPCExporter:
             # In legacy mode, all keys are required
             required_keys = config_keys
         elif config_keys is None:
-            raise ValueError("Either 'network' (deprecated) or 'config_keys' must be provided")
+            raise ValueError(
+                "Either 'network' (deprecated) or 'config_keys' must be provided. "
+                f"Got config_source='{config_source}', config_file='{config_file}'"
+            )
 
         self.config: ExporterConfig = ExporterConfig.init(config_keys)
         self.config.load(
