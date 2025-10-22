@@ -14,9 +14,21 @@ class ExporterConfig:
         """
         return cls(_config={key: None for key in keys})
 
-    def load(self, source: str, keys: Dict[str, str], file_path: Optional[str] = None) -> None:
+    def load(
+        self,
+        source: str,
+        keys: Dict[str, str],
+        file_path: Optional[str] = None,
+        required_keys: Optional[Dict[str, str]] = None,
+    ) -> None:
         """
         Load configuration values from either environment variables or a file.
+        
+        Args:
+            source: Configuration source ('fromEnv' or 'fromFile')
+            keys: All configuration keys to load
+            file_path: Path to configuration file (required if source='fromFile')
+            required_keys: Keys that must be present. If None, all keys are required.
         """
         if source == "fromEnv":
             self._load_from_env(keys)
@@ -26,7 +38,8 @@ class ExporterConfig:
             self._load_from_file(file_path, keys)
         else:
             raise ValueError("Invalid source. Use 'fromEnv' or 'fromFile'.")
-        self.validate(keys)
+        # Only validate required keys if specified, otherwise validate all
+        self.validate(required_keys if required_keys is not None else keys)
 
     def _load_from_env(self, keys: Dict[str, str]) -> None:
         """Load values from environment variables."""
