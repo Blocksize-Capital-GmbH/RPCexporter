@@ -8,6 +8,7 @@ CONFIG_KEYS: dict[str, dict[str, str]] = {
         "poll_interval": "POLL_INTERVAL",
         "vote_pubkey": "VOTE_PUBKEY",
         "validator_pubkey": "VALIDATOR_PUBKEY",
+        "double_zero_fees_address": "DOUBLE_ZERO_FEES_ADDRESS",
         "version": "VERSION",
         "label": "LABEL",
     },
