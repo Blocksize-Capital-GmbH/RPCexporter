@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - "main"
+            - "feature/**"
     pull_request:
         branches:
             - "main"
@@ -62,6 +63,7 @@ jobs:
 
             - name: Run Linting
               run: |
+                  poetry run pre-commit run trailing-whitespace --all-files
                   poetry run pre-commit run black --all-files
                   poetry run pre-commit run isort --all-files
                   poetry run pre-commit run flake8 --all-files
