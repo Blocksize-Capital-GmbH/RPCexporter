@@ -23,7 +23,7 @@ warnings.warn(
     "rpcExporterDefaults.CONFIG_KEYS is deprecated. "
     "Define configuration keys in your exporter implementation instead.",
     DeprecationWarning,
-    stacklevel=2
+    stacklevel=2,
 )
 
 # Legacy CONFIG_KEYS kept for backward compatibility

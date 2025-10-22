@@ -23,7 +23,7 @@ class ExporterConfig:
     ) -> None:
         """
         Load configuration values from either environment variables or a file.
-        
+
         Args:
             source: Configuration source ('fromEnv' or 'fromFile')
             keys: All configuration keys to load

@@ -11,7 +11,7 @@ from exporter.rpcExporterConfig import ExporterConfig
 
 class RPCExporter:
     """Base class for exporting metrics from an RPC-compatible network.
-    
+
     This class can be initialized in two ways:
     1. Legacy mode: Pass 'network' parameter (deprecated, uses centralized CONFIG_KEYS)
     2. Preferred mode: Pass 'config_keys' and optionally 'required_keys' parameters
@@ -26,21 +26,21 @@ class RPCExporter:
         required_keys: Optional[Dict[str, str]] = None,
     ):
         """Initialize the RPC Exporter.
-        
+
         Args:
             config_source: Configuration source ('fromEnv' or 'fromFile')
             config_file: Path to configuration file (required if config_source='fromFile')
             network: Network name (deprecated, use config_keys instead)
             config_keys: Dictionary mapping config key names to environment variable names
             required_keys: Dictionary of required configuration keys (subset of config_keys)
-        
+
         Example (preferred):
             exporter = RPCExporter(
                 config_source="fromEnv",
                 config_keys={"rpc_url": "SOLANA_RPC_URL", ...},
                 required_keys={"rpc_url": "SOLANA_RPC_URL", ...}
             )
-        
+
         Example (legacy, deprecated):
             exporter = RPCExporter(network="solana", config_source="fromEnv")
         """
@@ -50,20 +50,21 @@ class RPCExporter:
                 "Passing 'network' parameter is deprecated. "
                 "Please pass 'config_keys' and 'required_keys' instead.",
                 DeprecationWarning,
-                stacklevel=2
+                stacklevel=2,
             )
             from exporter.rpcExporterDefaults import CONFIG_KEYS
+
             self.network = network.lower()
             config_keys = CONFIG_KEYS[self.network]
             # In legacy mode, all keys are required
             required_keys = config_keys
         elif config_keys is None:
-            raise ValueError(
-                "Either 'network' (deprecated) or 'config_keys' must be provided"
-            )
-        
+            raise ValueError("Either 'network' (deprecated) or 'config_keys' must be provided")
+
         self.config: ExporterConfig = ExporterConfig.init(config_keys)
-        self.config.load(config_source, config_keys, file_path=config_file, required_keys=required_keys)
+        self.config.load(
+            config_source, config_keys, file_path=config_file, required_keys=required_keys
+        )
 
         self.rpc_url: str | None = self.config.rpc_url or self._raise_config_error(
             key="rpc_url"
